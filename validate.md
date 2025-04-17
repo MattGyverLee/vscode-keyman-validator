@@ -17,17 +17,17 @@ flowchart TD
     G5(["Run validate.js on Project Folder"])
     G6{Any Errors?}
     G7(["Send Errors Back to GPT for Revision"])
-    G9(["Outline Solution"])
-    G11(["Revise Solution"])
-    G12(["Is Solution Acceptable"])
-    G8(["Output Project to /build/ Folder"])
+    G8(["Propose a Solution"])
+    G11{Is Good Solution?}
+    G9(["Output Project to /build/ Folder"])
     G10(["Serve via Local Web Server (Keyman tools)"])
   end
 
-  U1 --> U2 --> G1 --> G2
-  U3 --> G2 --> G9 --> U4 --> G3 --> G4 --> G5 --> G6
-  G6 -- Yes --> G7 --> G3
-  G6 -- No --> G8 --> G10 --> U5
-  U4 --> G11 --> G9
-  G12 --> G3
+  U1 --> U2 --> G1 --> G8 --> G11 --> G2
+  U2 --> U3 --> U4 --> U5
+  U3 --> G2 --> G3 --> G4 --> G9 --> G5
+  G5 --> G6 -- Yes --> G7 --> G4
+  G5 -- No --> G10 --> U5
+  G3 --> U4
+  G6 -- No --> G10
 ```
