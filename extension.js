@@ -49,13 +49,23 @@ function runValidation() {
     vscode.window.showInformationMessage(`Running command: ${command}`);
     cp.exec(command, (error, stdout, stderr) => {
       if (error) {
-        const diagnostic = new vscode.Diagnostic(
-          new vscode.Range(0, 0, 0, 1),
-          `KMN Compilation Error: ${stderr || stdout}`,
-          vscode.DiagnosticSeverity.Error
-        );
-        const uri = vscode.Uri.file(fullKmnPath);
-        diagnosticCollection.set(uri, [diagnostic]);
+        const output = stderr || stdout || '';
+        const lines = output.split('\n').filter(line => line.trim() !== '');
+        const diagnostics = lines.map((line) => {
+          const match = line.match(/\.kmn:(\d+)/); // matches my.kmn:45: message
+          const lineNumber = match ? parseInt(match[1], 10) - 1 : 0;
+          const message = line.trim();
+          console.log(`Diagnostic for line ${lineNumber + 1}: ${message}`);
+          return new vscode.Diagnostic(
+            new vscode.Range(lineNumber, 0, lineNumber, 100),
+            message || 'Unknown compilation error',
+            vscode.DiagnosticSeverity.Error
+          );
+        });
+        if (diagnostics.length > 0) {
+          const uri = vscode.Uri.file(fullKmnPath);
+          diagnosticCollection.set(uri, diagnostics);
+        }
         vscode.window.showErrorMessage('KMN compilation failed. See Problems panel.');
       } else {
         vscode.window.showInformationMessage('KMN compiled successfully.');
@@ -74,8 +84,11 @@ function runValidation() {
       JSON.parse(layoutJson); // Just validating JSON structure
       vscode.window.showInformationMessage('Layout JSON is well-formed.');
     } catch (err) {
+      const errorLine = err.message.match(/line (\d+) column (\d+)/i); // Extract line and column numbers
+      const line = errorLine ? parseInt(errorLine[1], 10) - 1 : 0; // Convert to 0-based line index
+      const column = errorLine ? parseInt(errorLine[2], 10) - 1 : 0; // Convert to 0-based column index
       const diagnostic = new vscode.Diagnostic(
-        new vscode.Range(0, 0, 0, 1),
+        new vscode.Range(line, column, line, column + 1), // Highlight the specific column
         `JSON Parse Error: ${err.message}`,
         vscode.DiagnosticSeverity.Error
       );
@@ -98,4 +111,3 @@ module.exports = {
   activate,
   deactivate
 };
-
