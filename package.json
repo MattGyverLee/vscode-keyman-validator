@@ -1,0 +1,36 @@
+{
+  "name": "vscode-keyman-validator",
+  "version": "1.0.0",
+  "description": "Validates Keyman .kmn and touch layout XML files in /source/ folder.",
+  "engines": {
+    "vscode": "^1.99.1"
+  },
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "keyman.validateKeyboard",
+        "title": "Keyman: Validate Keyboard"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onCommand:keyman.validateKeyboard",
+    "workspaceContains:source/*.kmn"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@xmldom/xmldom": "^0.9.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/vscode": "^1.99.1",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.2",
+    "typescript": "^5.8.3",
+    "vscode": "^1.1.37",
+    "vscode-test": "^1.6.1"
+  }
+}
