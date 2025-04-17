@@ -1,39 +1,33 @@
+```mermaid
+flowchart TD
 
-<pre> ```
-mermaid flowchart TD
-
-  subgraph Training
-    A1(["Collect Valid Keyboards"])
-    A2(["Add Developer Docs & Schemas"])
-    A3(["Define Templates & Model Keyboards"])
-    A4(["Train/Prompt GPT on All Above"])
-    A1 --> A4
-    A2 --> A4
-    A3 --> A4
+  subgraph User
+    U1(["Provide Alphabet, Region, and Context"])
+    U2(["Choose a Template Keyboard"])
+    U3(["Define Special Preferences"])
+    U4(["Proof the Suggestions"])
+    U5(["Test the Output Keyboard with Keyman Web Tools"])
   end
 
-  subgraph Generation
-    B1(["User Provides Alphabet + Intent"])
-    B2(["Select Template Keyboard"])
-    B3(["Customize Layouts"])
-    B4(["GPT Generates .kmn, .kvk, .keyman-touch-layout, etc."])
-    B1 --> B2 --> B3 --> B4
+  subgraph GPT
+    G1(["Suggest a Model Keyboard"])
+    G2(["Modify and Adapt Template Keyboard"])
+    G3(["Customize Layouts"])
+    G4(["Generate .kmn, .kvk, .keyman-touch-layout, etc."])
+    G5(["Run validate.js on Project Folder"])
+    G6{Any Errors?}
+    G7(["Send Errors Back to GPT for Revision"])
+    G9(["Outline Solution"])
+    G11(["Revise Solution"])
+    G12(["Is Solution Acceptable"])
+    G8(["Output Project to /build/ Folder"])
+    G10(["Serve via Local Web Server (Keyman tools)"])
   end
 
-  subgraph Validation
-    C1(["Run validate.js on Project Folder"])
-    C2{Any Errors?}
-    C3(["Send Errors Back to GPT for Revision"])
-    C4(["Repeat Generation with Fixes"])
-    B4 --> C1 --> C2
-    C2 -- Yes --> C3 --> C4 --> B4
-  end
-
-  subgraph Output
-    D1(["Output Project to /build/ Folder"])
-    D2(["Serve via Local Web Server (Keyman tools)"])
-    C2 -- No --> D1 --> D2
-  end
-
-  click C1 href "validate.js" _blank
-</pre>
+  U1 --> U2 --> G1 --> G2
+  U3 --> G2 --> G9 --> U4 --> G3 --> G4 --> G5 --> G6
+  G6 -- Yes --> G7 --> G3
+  G6 -- No --> G8 --> G10 --> U5
+  U4 --> G11 --> G9
+  G12 --> G3
+```
